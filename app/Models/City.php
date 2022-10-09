@@ -13,5 +13,11 @@ class City extends Model
         "id",
         "name",
         "forecast",
+        "temperature",
+        "feels_like",
+        "temp_min",
+        "temp_max",
+        "pressure",
+        "humidity"
     ];
 }

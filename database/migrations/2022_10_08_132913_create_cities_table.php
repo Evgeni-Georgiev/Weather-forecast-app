@@ -17,6 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('forecast')->nullable();
+            $table->string('temperature')->nullable();
+            $table->string('feels_like')->nullable();
+            $table->string('temp_min')->nullable();
+            $table->string('temp_max')->nullable();
+            $table->string('pressure')->nullable();
+            $table->string('humidity')->nullable();
         });
     }
 
