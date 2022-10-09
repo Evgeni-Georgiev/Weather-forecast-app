@@ -3,7 +3,7 @@
 namespace App\Services;
 
 /**
- * Service class for holding all the loading for fetching, rendering and saving data to the database.
+ * Service class for retrieving and parsing API data.
  */
 class CityService
 {
@@ -17,50 +17,46 @@ class CityService
     }
 
     /**
-     * parse JSON Data from local file
+     * parse JSON Data from local file.
      * @return mixed
      */
     public static function parseJsonData($response_data)
     {
-//        $path = storage_path('app/public/city_data.json');
-        $json_data = json_decode(file_get_contents($response_data));
-        return $json_data;
+        $jsonData = json_decode(file_get_contents($response_data));
+        return $jsonData;
     }
 
     /*
-     * Iterate the retrieved data from the object, save all city names in an array
-     * Children cities solution: Recursive function for fetching the city names and children
+     * Recursively get all cities.
      * @param $cities
      * @return array
      */
-    public static function getCityName($cities, array $array_holding_cities)
+    public static function getCityName($cities, $citiesHolder)
     {
         foreach ($cities as $city) {
             $cityName = $city->name;
-            $array_holding_cities[] = $cityName;
+            $citiesHolder[] = $cityName;
             if (isset($city->children)) {
-//                    $arr_with_cities = CityService::getCityName($city->children, array_values(array_holding_cities));
-                $array_holding_cities = CityService::getCityName($city->children, $array_holding_cities);
+                $citiesHolder = CityService::getCityName($city->children, $citiesHolder);
             }
         }
-        return $array_holding_cities;
+        return $citiesHolder;
     }
 
     /**
-     * Get data for current city from API and decode it as an object
+     * Get data for city from API.
      * @param $cityNames
      * @return mixed
      */
     public static function getCityWeather()
     {
-        $array_holding_city_names = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
-        $arr_hold_weather = [];
-        foreach($array_holding_city_names as $cityName) {
-//            $arr_hold_weather[] = self::getJsonData(self::getWeatherApi($cityName))->weather[0]->description;
-            $arr_hold_weather[] = self::parseJsonData(self::getWeatherApi($cityName));
+        $cities = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
+        $weatherHolder = [];
+        foreach($cities as $cityName) {
+            $weatherHolder[] = self::parseJsonData(self::getWeatherApi($cityName));
         }
 
-        return $arr_hold_weather;
+        return $weatherHolder;
     }
 
 }

@@ -4,34 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Services\CityService;
-use App\Services\UpdateWeatherService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      */
     public function index()
     {
-        // 1.TODO: return data from json as array only name of cities -- asses to name of the method
-        $getNamesOfCitiesFromJson = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
+        // Return data from json as array only name of cities -- asses to name of the method.
+        $cities = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
 
-        // 2.TODO: having the cities -- get the weather data for every of the cities ,result :array with the city and weather data -- send to the view
-        $getWeatherForACityFromApi = CityService::getCityWeather();
-        $array_with_city_and_weather_data = array_combine($getNamesOfCitiesFromJson, $getWeatherForACityFromApi);
+        // Having the cities -- get the weather data for every of the cities ,result :array with the city and weather data -- send to the view.
+        $cityWeather = CityService::getCityWeather();
 
-        // 3.TODO: having all data fetched, send to service to update them in the db
-        UpdateWeatherService::getCityByNameOrCreate($array_with_city_and_weather_data);
+        //  CamelCase or snakeCase -- Laravel convention is CamelCase.
+        $citiesAndWeatherData = array_combine($cities, $cityWeather);
 
-        // 4.TODO: send for rendering to the view
-        // reformat
+        // having all data fetched, send to service to update them in the db.
+        City::updateCityByNameOrCreate($citiesAndWeatherData);
 
-        // will not need
-        $all_cities = City::all();
-
-        return view('cities', compact('all_cities'));
+        // Send for rendering to the view.
+        return view('cities', ['cities' => City::all()]);
 
     }
 }
