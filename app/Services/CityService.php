@@ -19,7 +19,7 @@ class CityService
     }
 
     /**
-     * parse JSON Data from local file.
+     * Parse JSON Data from local file.
      * @return mixed
      */
     public static function parseJsonData($response_data)
