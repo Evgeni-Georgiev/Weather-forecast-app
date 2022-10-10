@@ -54,7 +54,7 @@ class CityService
     {
         $weatherHolder = [];
         foreach ($cities as $cityName) {
-            $weatherHolder[] = self::parseJsonData(self::getWeatherApi($cityName));
+            $weatherHolder[$cityName] = self::parseJsonData(self::getWeatherApi($cityName));
         }
 
         return $weatherHolder;

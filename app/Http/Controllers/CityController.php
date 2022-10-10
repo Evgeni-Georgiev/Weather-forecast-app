@@ -23,10 +23,8 @@ class CityController extends Controller
         // Get the weather data for every of the cities.
         $cityWeather = CityService::getCityWeather($cities);
 
-        $citiesAndWeatherData = array_combine($cities, $cityWeather);
-
         // Update data in the database.
-        City::updateCityByNameOrCreate($citiesAndWeatherData);
+        City::updateCityByNameOrCreate($cityWeather);
 
         // Send for rendering to the view.
         return view('cities', ['cities' => City::all()]);
