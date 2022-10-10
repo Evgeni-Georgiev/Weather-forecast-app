@@ -21,9 +21,9 @@ class CityController extends Controller
         $cities = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
 
         // Having the cities -- get the weather data for every of the cities ,result :array with the city and weather data -- send to the view.
-        $cityWeather = CityService::getCityWeather();
+        $cityWeather = CityService::getCityWeather($cities);
 
-        //  CamelCase or snakeCase -- Laravel convention is CamelCase.
+        // CamelCase or snakeCase -- Laravel convention is CamelCase.
         $citiesAndWeatherData = array_combine($cities, $cityWeather);
 
         // having all data fetched, send to service to update them in the db.

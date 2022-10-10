@@ -8,11 +8,13 @@ namespace App\Services;
 class CityService
 {
 
-    public static function getWeatherApi($cityName) {
+    public static function getWeatherApi($cityName)
+    {
         return "https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=imperial&appid=895284fb2d2c50a520ea537456963d9c";
     }
 
-    public static function getCityDataPath() {
+    public static function getCityDataPath()
+    {
         return storage_path('app/public/city_data.json');
     }
 
@@ -48,11 +50,10 @@ class CityService
      * @param $cityNames
      * @return mixed
      */
-    public static function getCityWeather()
+    public static function getCityWeather($cities)
     {
-        $cities = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
         $weatherHolder = [];
-        foreach($cities as $cityName) {
+        foreach ($cities as $cityName) {
             $weatherHolder[] = self::parseJsonData(self::getWeatherApi($cityName));
         }
 
