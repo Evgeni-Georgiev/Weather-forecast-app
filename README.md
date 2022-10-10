@@ -9,13 +9,12 @@
 
 ## About the project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Weather forecast application that reads the data from public api and renders the forecast for the current day of a city.
 
 ### Controller
 
-The controller(CityController) contains the methods called from the service class and model
-used to get the json data for the cities and weather APIs 
-and updating the data in the database.
+The controller(CityController) handles the data processing between the model and view.
+It returns the data from the model to the view to be rendered on a template.
 
 ### Service
 
