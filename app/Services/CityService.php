@@ -2,62 +2,98 @@
 
 namespace App\Services;
 
+use InvalidArgumentException;
+
 /**
  * Service class for retrieving and parsing API data.
  */
-class CityService
+class CityService implements ICityService
 {
+    private const API_BASE_URL = 'https://api.openweathermap.org/data/2.5/';
+    private const API_ENDPOINT = 'weather?q=';
+    private const API_GET_REQUEST_PARAMS = '&units=imperial&appid=895284fb2d2c50a520ea537456963d9c';
+    private const STORAGE_DATA_PATH = 'app/public/city_data.json'; // file is not committed
 
-    public static function getWeatherApi($cityName)
+    private array $cityNames;
+
+    public function __construct()
     {
-        return "https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=imperial&appid=895284fb2d2c50a520ea537456963d9c";
+        $citiesJsonFileData = $this->parseJsonLocalFileData();
+
+        $citiesHolder = [];
+        $this->cityNames = $this->getCityNames($citiesJsonFileData, $citiesHolder);
     }
 
-    public static function getCityDataPath()
+
+    private function getWeatherApiUrl($cityName): string
     {
-        return storage_path('app/public/city_data.json');
+        return self::API_BASE_URL . self::API_ENDPOINT . $cityName . self::API_GET_REQUEST_PARAMS;
     }
 
     /**
      * Parse JSON Data from local file.
      * @return mixed
      */
-    public static function parseJsonData($response_data)
+    private function parseJsonLocalFileData(): mixed
     {
-        $jsonData = json_decode(file_get_contents($response_data));
-        return $jsonData;
+        $file_path = storage_path(self::STORAGE_DATA_PATH);
+        return json_decode(file_get_contents($file_path));
     }
 
-    /*
-     * Recursively get all cities.
-     * @param $cities
-     * @return array
+    /**
+     * @param $cityName string city name to fetch data from API
+     * @return mixed
      */
-    public static function getCityName($cities, $citiesHolder)
+    private function sendRestCallAndFetchData(string $cityName): mixed
+    {
+        return json_decode(file_get_contents($this->getWeatherApiUrl($cityName)));
+    }
+
+    /**
+     * Recursively parse all city names from the local JSON file.
+     * @param $cities array cities from the json file
+     * @param $citiesHolder array holding parsed cities, used for recursion calls
+     * @return array containing all parsed city names
+     */
+    private function getCityNames(array $cities, array $citiesHolder): array
     {
         foreach ($cities as $city) {
             $cityName = $city->name;
             $citiesHolder[] = $cityName;
             if (isset($city->children)) {
-                $citiesHolder = CityService::getCityName($city->children, $citiesHolder);
+                $citiesHolder = CityService::getCityNames($city->children, $citiesHolder);
             }
         }
         return $citiesHolder;
     }
 
     /**
-     * Get data for city from API.
-     * @param $cityNames
-     * @return mixed
+     * Get whether data for all cities from API.
+     * @return array
      */
-    public static function getCityWeather($cities)
+    public function getAllCitiesWeatherStatuses(): array
     {
         $weatherHolder = [];
-        foreach ($cities as $cityName) {
-            $weatherHolder[$cityName] = self::parseJsonData(self::getWeatherApi($cityName));
+
+        foreach ($this->cityNames as $cityName) {
+            $weatherHolder[$cityName] = $this->getCityWeatherStatus($cityName);
         }
 
         return $weatherHolder;
+    }
+
+    /**
+     * Fetches data from the API for a city.
+     * @param $cityName string name of city to fetch data
+     * @return mixed resulting data from API
+     */
+    public function getCityWeatherStatus($cityName): mixed
+    {
+        if (!in_array($cityName, $this->cityNames)) {
+            throw new InvalidArgumentException("City is not in the list");
+        }
+
+        return $this->sendRestCallAndFetchData($cityName);
     }
 
 }
