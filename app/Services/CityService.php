@@ -8,24 +8,41 @@ namespace App\Services;
 class CityService
 {
 
-    public static function getWeatherApi($cityName)
+    private const API_BASE_URL = 'https://api.openweathermap.org/data/2.5/';
+    private const API_ENDPOINT = 'weather?q=';
+    private const API_GET_REQUEST_PARAMS = '&units=imperial&appid=895284fb2d2c50a520ea537456963d9c';
+    private const STORAGE_DATA_PATH = 'app/public/city_data.json';
+
+    private array $cityNames;
+
+    public function __construct()
     {
-        return "https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=imperial&appid=895284fb2d2c50a520ea537456963d9c";
+        $cityHolder = [];
+        $this->cityNames = $this->getCityName($this->parseJsonData()->cities, $cityHolder);
     }
 
-    public static function getCityDataPath()
+    private function getWeatherApi($cityName)
     {
-        return storage_path('app/public/city_data.json');
+        return self::API_BASE_URL . self::API_ENDPOINT . $cityName . self::API_GET_REQUEST_PARAMS;
     }
 
     /**
      * Parse JSON Data from local file.
      * @return mixed
      */
-    public static function parseJsonData($response_data)
+    private function parseJsonData()
     {
-        $jsonData = json_decode(file_get_contents($response_data));
-        return $jsonData;
+        return json_decode(file_get_contents(self::STORAGE_DATA_PATH));
+    }
+
+
+    /**
+     * @param $cityName string city name to fetch data from API
+     * @return mixed
+     */
+    private function fetchDataFromApi(string $cityName): mixed
+    {
+        return json_decode(file_get_contents($this->getWeatherApi($cityName)));
     }
 
     /*
@@ -33,7 +50,7 @@ class CityService
      * @param $cities
      * @return array
      */
-    public static function getCityName($cities, $citiesHolder)
+    private function getCityName($cities, $citiesHolder)
     {
         foreach ($cities as $city) {
             $cityName = $city->name;
@@ -50,11 +67,11 @@ class CityService
      * @param $cityNames
      * @return mixed
      */
-    public static function getCityWeather($cities)
+    public function getCityWeather()
     {
         $weatherHolder = [];
-        foreach ($cities as $cityName) {
-            $weatherHolder[$cityName] = self::parseJsonData(self::getWeatherApi($cityName));
+        foreach ($this->cityNames as $cityName) {
+            $weatherHolder[$cityName] = $this->fetchDataFromApi($cityName);
         }
 
         return $weatherHolder;
