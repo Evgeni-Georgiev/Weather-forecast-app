@@ -41,6 +41,9 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+// Register the service for injection
+// More info: https://laravel.com/docs/9.x/container
+$app->bind(\App\Services\ICityService::class, \App\Services\CityService::class);
 /*
 |--------------------------------------------------------------------------
 | Return The Application
