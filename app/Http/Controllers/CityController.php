@@ -10,13 +10,6 @@ use Illuminate\Contracts\View\View;
 
 class CityController extends Controller
 {
-
-    private CityService $cityService; // private property of the controller
-
-    public function __construct(CityService $cityService) {
-        $this->cityService = $cityService;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -24,9 +17,11 @@ class CityController extends Controller
      */
     public function index()
     {
+        // Get names of cities from json.
+        $cities = CityService::getCityName(CityService::parseJsonData(CityService::getCityDataPath())->cities, []);
 
         // Get the weather data for every of the cities.
-        $cityWeather = $this->cityService->getCityWeather();
+        $cityWeather = CityService::getCityWeather($cities);
 
         // Update data in the database.
         City::updateCityByNameOrCreate($cityWeather);
