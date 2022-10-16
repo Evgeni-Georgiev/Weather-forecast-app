@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Services\CityService;
+use App\Services\WeatherService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -11,11 +12,11 @@ use Illuminate\Contracts\View\View;
 class CityController extends Controller
 {
 
-    private CityService $cityService;
+    private WeatherService $weatherService;
     private City $cityModel;
 
-    public function __construct(CityService $cityService, City $cityModel) {
-        $this->cityService = $cityService;
+    public function __construct(WeatherService $weatherService, City $cityModel) {
+        $this->weatherService = $weatherService;
         $this->cityModel = $cityModel;
     }
 
@@ -28,7 +29,7 @@ class CityController extends Controller
     {
 
         // Get the weather data for every of the cities.
-        $cityWeather = $this->cityService->getCityWeather();
+        $cityWeather = $this->weatherService->getCityWeather();
 
         // Update data in the database.
         $this->cityModel->updateCityByNameOrCreate($cityWeather);
