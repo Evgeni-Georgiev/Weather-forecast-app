@@ -22,7 +22,7 @@ class City extends Model
         "humidity"
     ];
 
-    public static function updateCityByNameOrCreate($array_with_city_and_weather_data)
+    public function updateCityByNameOrCreate($array_with_city_and_weather_data)
     {
 
         foreach ($array_with_city_and_weather_data as $key => $value) {

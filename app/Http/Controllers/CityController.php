@@ -12,9 +12,11 @@ class CityController extends Controller
 {
 
     private CityService $cityService;
+    private City $cityModel;
 
-    public function __construct(CityService $cityService) {
+    public function __construct(CityService $cityService, City $cityModel) {
         $this->cityService = $cityService;
+        $this->cityModel = $cityModel;
     }
 
     /**
@@ -29,7 +31,7 @@ class CityController extends Controller
         $cityWeather = $this->cityService->getCityWeather();
 
         // Update data in the database.
-        City::updateCityByNameOrCreate($cityWeather);
+        $this->cityModel->updateCityByNameOrCreate($cityWeather);
 
         // Send for rendering to the view.
         return view('cities', ['cities' => City::all()]);
