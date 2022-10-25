@@ -125,6 +125,11 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'api_base_url' => 'https://api.openweathermap.org/data/2.5/',
+    'api_endpoint' => 'weather?q=',
+    'api_get_request_params' => '&units=imperial&appid=895284fb2d2c50a520ea537456963d9c',
+    'cities_storage_data_path' => 'app/public/city_data.json',
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
