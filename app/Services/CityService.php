@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Config;
  */
 class CityService
 {
+    private const API_ENDPOINT = 'weather?q=';
+    private const API_GET_REQUEST_PARAMS = '&units=imperial&appid=895284fb2d2c50a520ea537456963d9c';
 
     private function getWeatherApi($cityName)
     {
-        return Config::get('app.api_base_url') . Config::get('app.api_endpoint') . $cityName . Config::get('app.api_get_request_params');
+        return Config::get('app.api_base_url') . self::API_ENDPOINT . $cityName . self::API_GET_REQUEST_PARAMS;
     }
 
     protected function fetchDataFromApi($cityName)
