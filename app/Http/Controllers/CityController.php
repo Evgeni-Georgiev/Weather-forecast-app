@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
-use App\Services\CityService;
-use App\Services\WeatherService;
+use App\Services\CityInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -12,10 +11,10 @@ use Illuminate\Contracts\View\View;
 class CityController extends Controller
 {
 
-    private WeatherService $weatherService;
+    private CityInterface $weatherService;
     private City $cityModel;
 
-    public function __construct(WeatherService $weatherService, City $cityModel) {
+    public function __construct(CityInterface $weatherService, City $cityModel) {
         $this->weatherService = $weatherService;
         $this->cityModel = $cityModel;
     }

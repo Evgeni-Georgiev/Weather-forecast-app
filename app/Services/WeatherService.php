@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class WeatherService extends CityService {
+class WeatherService extends CityService implements CityInterface {
 
     private $cityName;
 
