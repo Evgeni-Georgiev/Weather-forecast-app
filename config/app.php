@@ -125,6 +125,9 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'api_base_url' => 'https://api.openweathermap.org/data/2.5/',
+    'cities_storage_data_path' => 'app/public/city_data.json',
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
@@ -194,6 +197,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\WeatherServiceProvider::class
 
     ],
 

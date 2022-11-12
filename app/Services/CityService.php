@@ -2,62 +2,29 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Config;
+
 /**
  * Service class for retrieving and parsing API data.
  */
 class CityService
 {
+    private const API_ENDPOINT = 'weather?q=';
+    private const API_GET_REQUEST_PARAMS = '&units=imperial&appid=895284fb2d2c50a520ea537456963d9c';
 
-    public static function getWeatherApi($cityName)
+    private function getWeatherApi($cityName)
     {
-        return "https://api.openweathermap.org/data/2.5/weather?q=$cityName&units=imperial&appid=895284fb2d2c50a520ea537456963d9c";
+        return Config::get('app.api_base_url') . self::API_ENDPOINT . $cityName . self::API_GET_REQUEST_PARAMS;
     }
 
-    public static function getCityDataPath()
+    protected function fetchDataFromApi($cityName)
     {
-        return storage_path('app/public/city_data.json');
+        return json_decode(file_get_contents($this->getWeatherApi($cityName)));
     }
 
-    /**
-     * Parse JSON Data from local file.
-     * @return mixed
-     */
-    public static function parseJsonData($response_data)
+    protected function getCityJsonFile()
     {
-        $jsonData = json_decode(file_get_contents($response_data));
-        return $jsonData;
-    }
-
-    /*
-     * Recursively get all cities.
-     * @param $cities
-     * @return array
-     */
-    public static function getCityName($cities, $citiesHolder)
-    {
-        foreach ($cities as $city) {
-            $cityName = $city->name;
-            $citiesHolder[] = $cityName;
-            if (isset($city->children)) {
-                $citiesHolder = CityService::getCityName($city->children, $citiesHolder);
-            }
-        }
-        return $citiesHolder;
-    }
-
-    /**
-     * Get data for city from API.
-     * @param $cityNames
-     * @return mixed
-     */
-    public static function getCityWeather($cities)
-    {
-        $weatherHolder = [];
-        foreach ($cities as $cityName) {
-            $weatherHolder[$cityName] = self::parseJsonData(self::getWeatherApi($cityName));
-        }
-
-        return $weatherHolder;
+        return json_decode(file_get_contents(storage_path(Config::get('app.cities_storage_data_path'))));
     }
 
 }
